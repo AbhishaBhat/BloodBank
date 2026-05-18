@@ -51,7 +51,6 @@ pipeline {
 
         stage('Push Docker Image') {
     steps {
-
         withCredentials([usernamePassword(
             credentialsId: 'dockerhub-creds',
             usernameVariable: 'DOCKER_USER',
@@ -59,10 +58,8 @@ pipeline {
         )]) {
 
             bat '''
-            echo %DOCKER_PASS% > docker_pass.txt
-            docker login -u %DOCKER_USER% --password-stdin < docker_pass.txt
-            del docker_pass.txt
-
+            docker logout || exit 0
+            docker login -u %DOCKER_USER% -p %DOCKER_PASS%
             docker push %DOCKER_IMAGE%
             '''
         }
