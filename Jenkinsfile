@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "abhibhat123/bloodbank"
+        DOCKER_IMAGE = "abhibhat23/bloodbank"
     }
 
     stages {
@@ -58,9 +58,10 @@ pipeline {
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
 
-                    bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
-
-                    bat 'docker push %DOCKER_IMAGE%'
+                    bat '''
+                    echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
+                    docker push %DOCKER_IMAGE%
+                    '''
                 }
             }
         }
