@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { MdOutlineBloodtype } from "react-icons/md";
 import { HiOutlineLogout } from "react-icons/hi";
 import { FaUserAlt } from "react-icons/fa";

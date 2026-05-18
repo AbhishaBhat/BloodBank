@@ -194,6 +194,8 @@ const Form = ({ formType, submitBtn, formTitle }) => {
                   />
                 </>
               );
+            default:
+              return null;
           }
         })()}
 

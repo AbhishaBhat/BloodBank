@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Form from '../../components/shared/Form/Form'
 import {useSelector} from 'react-redux'
 import {DNA} from 'react-loader-spinner'
@@ -33,7 +33,7 @@ const Login = () => {
               </div>
             </div>
             <div className="col-sm-6 px-0 d-none d-sm-block">
-              <img src="./assets/banner1.jpg" alt="Login image" />
+              <img src="./assets/banner1.jpg" alt="Login" />
             </div>
             </div>
         </div>

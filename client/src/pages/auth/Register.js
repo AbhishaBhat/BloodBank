@@ -32,7 +32,7 @@ const Register = () => {
                   </div>
                 </div>
                 <div className="col-sm-6 px-0 d-none d-sm-block">
-                  <img src="./assets/banner2.jpg" alt="Login image" className="banner" />
+                  <img src="./assets/banner2.jpg" alt="Register" className="banner" />
                 </div>
               </div>
             </div>

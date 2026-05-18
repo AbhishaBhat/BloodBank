@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Layout from "../../components/shared/Layout/Layout";
 import API from "../../services/API";
 import moment from "moment";
@@ -10,7 +10,7 @@ const Consumer = () => {
     const [data, setData] = useState([]);
     const [temp,setTemp] =useState(false);
     //find donar records
-    const getDonars = async () => {
+    const getDonars = useCallback(async () => {
       try {
         const { data } = await API.post("/inventory/get-inventory-hospital", {
           filters: {
@@ -27,12 +27,12 @@ const Consumer = () => {
       }finally{
         setTemp(false);
       }
-    };
+    }, [user?._id]);
   
     useEffect(() => {
         setTemp(true);
       getDonars();
-    }, []);
+    }, [getDonars]);
   
     return (
       <Layout>

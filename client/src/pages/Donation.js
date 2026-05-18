@@ -1,5 +1,5 @@
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Layout from "../components/shared/Layout/Layout";
 import API from "../services/API";
 import { useSelector } from "react-redux";
@@ -10,7 +10,7 @@ const Donation = () => {
   const [data, setData] = useState([]);
   const [temp,setTemp] = useState(false);
   //find donar records
-  const getDonars = async () => {
+  const getDonars = useCallback(async () => {
     try {
       const { data } = await API.post("/inventory/get-inventory-hospital", {
         filters: {
@@ -26,12 +26,12 @@ const Donation = () => {
     }finally{
         setTemp(false);
     }
-  };
+  }, [user?._id]);
 
   useEffect(() => {
     setTemp(true);
     getDonars();
-  }, []);
+  }, [getDonars]);
 
   return (
     <Layout>
