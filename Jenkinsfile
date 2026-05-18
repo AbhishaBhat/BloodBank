@@ -26,7 +26,7 @@ pipeline {
                         bat '''
                         sonar-scanner ^
                         -Dsonar.projectKey=AbhishaBhat_BloodBank ^
-                        -Dsonar.organization=AbhishaBhat ^
+                        -Dsonar.organization=abhishabhat ^
                         -Dsonar.host.url=https://sonarcloud.io ^
                         -Dsonar.token=%SONAR_TOKEN%
                         '''
