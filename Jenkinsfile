@@ -7,20 +7,15 @@ pipeline {
 
     stages {
 
-        stage('Clone Repository') {
-            steps {
-                git 'https://github.com/AbhishaBhat/BloodBank.git'
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
+
                 withSonarQubeEnv('SonarCloud') {
 
                     withCredentials([string(
@@ -28,12 +23,12 @@ pipeline {
                         variable: 'SONAR_TOKEN'
                     )]) {
 
-                        sh '''
-                        sonar-scanner \
-                        -Dsonar.projectKey=AbhishaBhat_BloodBank \
-                        -Dsonar.organization=AbhishaBhat \
-                        -Dsonar.host.url=https://sonarcloud.io \
-                        -Dsonar.token=$SONAR_TOKEN
+                        bat '''
+                        sonar-scanner ^
+                        -Dsonar.projectKey=AbhishaBhat_BloodBank ^
+                        -Dsonar.organization=AbhishaBhat ^
+                        -Dsonar.host.url=https://sonarcloud.io ^
+                        -Dsonar.token=%SONAR_TOKEN%
                         '''
                     }
                 }
@@ -42,6 +37,7 @@ pipeline {
 
         stage('OWASP Dependency Check') {
             steps {
+
                 dependencyCheck additionalArguments: '--scan .',
                 odcInstallation: 'OWASP-DC'
             }
@@ -49,7 +45,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE .'
+                bat 'docker build -t %DOCKER_IMAGE% .'
             }
         }
 
@@ -62,9 +58,9 @@ pipeline {
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
 
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
 
-                    sh 'docker push $DOCKER_IMAGE'
+                    bat 'docker push %DOCKER_IMAGE%'
                 }
             }
         }
