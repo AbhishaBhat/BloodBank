@@ -49,22 +49,22 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image') {
-    steps {
-        withCredentials([usernamePassword(
-            credentialsId: 'dockerhub-creds',  // ✅ Must match Jenkins credential ID
-            usernameVariable: 'DOCKER_USER',
-            passwordVariable: 'DOCKER_PASS'
-        )]) {
-            bat '''
-            @echo off
-            echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
-            docker push abhibhat23/bloodbank:latest
-            docker logout
-            '''
-        }
-    }
-}
+//         stage('Push Docker Image') {
+//     steps {
+//         withCredentials([usernamePassword(
+//             credentialsId: 'dockerhub-creds',  // ✅ Must match Jenkins credential ID
+//             usernameVariable: 'DOCKER_USER',
+//             passwordVariable: 'DOCKER_PASS'
+//         )]) {
+//             bat '''
+//             @echo off
+//             echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
+//             docker push abhibhat23/bloodbank:latest
+//             docker logout
+//             '''
+//         }
+//     }
+// }
 
         stage('Deploy') {
             steps {
