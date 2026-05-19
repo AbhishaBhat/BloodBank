@@ -3,6 +3,8 @@ import Form from '../../components/shared/Form/Form'
 import {useSelector} from 'react-redux'
 import {DNA} from 'react-loader-spinner'
 import toast from 'react-hot-toast'
+import logo from '../../assets/logo.png'
+import banner1 from '../../assets/banner1.jpg'
 
 const Login = () => {
   const {loading,error} = useSelector(state => state.auth)
@@ -15,7 +17,7 @@ const Login = () => {
                 <div className="row">
                 <div className="col-sm-4 text-black">
               <div className="px-5 ms-xl-4">
-                  <img src="./assets/logo.png" className='logo-login' alt="Red Gold" />
+                  <img src={logo} className='logo-login' alt="Red Gold" />
               </div>
               <div className="d-flex align-items-center h-custom-2 px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5">
                 {loading ?  (<div className="d-flex w-100 h-100 align-items-center justify-content-center">
@@ -33,7 +35,7 @@ const Login = () => {
               </div>
             </div>
             <div className="col-sm-6 px-0 d-none d-sm-block">
-              <img src="./assets/banner1.jpg" alt="Login" />
+              <img src={banner1} alt="Login" />
             </div>
             </div>
         </div>
