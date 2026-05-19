@@ -58,17 +58,16 @@ pipeline {
         )]) {
 
             bat '''
-            docker logout
+            echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
 
-            echo %DOCKER_PASS%>docker_pass.txt
-            docker login -u %DOCKER_USER% --password-stdin < docker_pass.txt
-            del docker_pass.txt
+            if errorlevel 1 exit /b 1
 
             docker push %DOCKER_IMAGE%
             '''
         }
     }
 }
+
 
         stage('Deploy') {
             steps {
