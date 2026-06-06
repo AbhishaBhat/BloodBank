@@ -1,36 +1,46 @@
-const mongoose = require("mongoose");
 const inventoryModel = require("../models/inventoryModel");
 const userModel = require("../models/userModel");
 
 const createInventoryController = async (req, res) => {
   try {
-    const { email } = req.body;
-    const user = await userModel.findOne({ email });
-    console.log(email);
-    console.log(user);
+    const { inventoryType, bloodGroup, quantity } = req.body;
+    const user = await userModel.findById(req.body.userId);
+
     if (!user) {
-      console.log("USER NOT FOUND");
-      throw new Error("ERROR USER NOT FOUND");
+      return res.status(404).send({
+        success: false,
+        message: "User not found",
+      });
     }
 
-    // if(inventoryType ==='in' && user.role !== 'donar'){
-    //     throw new Error("NOT A DONAR ACCOUNT");
-    // }
-    // if(inventoryType === 'out' && user.role !== 'hospital'){
-    //     throw new Error('Not a hospital account');
-    // }
+    if (!inventoryType || !bloodGroup || !quantity || Number(quantity) <= 0) {
+      return res.status(400).send({
+        success: false,
+        message: "Please provide blood group, inventory type, and quantity",
+      });
+    }
 
-    if (req.body.inventoryType == "out") {
-      const requestedBloodGroup = req.body.bloodGroup;
-      const requestedQuantityOfBlood = req.body.quantity;
-      const organisation = new mongoose.Types.ObjectId(req.body.userId);
-      //calculate Blood Quanitity
+    if (inventoryType === "in" && user.role !== "donar") {
+      return res.status(403).send({
+        success: false,
+        message: "Only donors can add blood stock",
+      });
+    }
+
+    if (inventoryType === "out" && user.role !== "hospital") {
+      return res.status(403).send({
+        success: false,
+        message: "Only hospitals can consume blood stock",
+      });
+    }
+
+    if (inventoryType === "out") {
+      const requestedQuantityOfBlood = Number(quantity);
       const totalInOfRequestedBlood = await inventoryModel.aggregate([
         {
           $match: {
-            organisation,
             inventoryType: "in",
-            bloodGroup: requestedBloodGroup,
+            bloodGroup,
           },
         },
         {
@@ -40,16 +50,13 @@ const createInventoryController = async (req, res) => {
           },
         },
       ]);
-      // console.log("Total In", totalInOfRequestedBlood);
       const totalIn = totalInOfRequestedBlood[0]?.total || 0;
-      //calculate OUT Blood Quanitity
 
       const totalOutOfRequestedBloodGroup = await inventoryModel.aggregate([
         {
           $match: {
-            organisation,
             inventoryType: "out",
-            bloodGroup: requestedBloodGroup,
+            bloodGroup,
           },
         },
         {
@@ -61,13 +68,11 @@ const createInventoryController = async (req, res) => {
       ]);
       const totalOut = totalOutOfRequestedBloodGroup[0]?.total || 0;
 
-      //in & Out Calc
       const availableQuanityOfBloodGroup = totalIn - totalOut;
-      //quantity validation
       if (availableQuanityOfBloodGroup < requestedQuantityOfBlood) {
         return res.status(500).send({
           success: false,
-          message: `Only ${availableQuanityOfBloodGroup}ml of ${requestedBloodGroup.toUpperCase()} is available`,
+          message: `Only ${availableQuanityOfBloodGroup}ml of ${bloodGroup.toUpperCase()} is available`,
         });
       }
       req.body.hospital = user?._id;
@@ -75,7 +80,14 @@ const createInventoryController = async (req, res) => {
       req.body.donar = user?._id;
     }
 
-    const inventory = new inventoryModel(req.body);
+    const inventory = new inventoryModel({
+      inventoryType,
+      bloodGroup,
+      quantity: Number(quantity),
+      email: user.email,
+      donar: req.body.donar,
+      hospital: req.body.hospital,
+    });
     await inventory.save();
 
     res.status(201).send({
@@ -94,8 +106,19 @@ const createInventoryController = async (req, res) => {
 
 const getInventoryController = async (req, res) => {
   try {
+    const user = await userModel.findById(req.body.userId);
+    const filters = {};
+
+    if (user?.role === "donar") {
+      filters.donar = req.body.userId;
+    }
+
+    if (user?.role === "hospital") {
+      filters.hospital = req.body.userId;
+    }
+
     const inventory = await inventoryModel
-      .find({ organisation: req.body.userId })
+      .find(filters)
       .populate("donar")
       .populate("hospital")
       .sort({ createdAt: -1 });
@@ -120,7 +143,6 @@ const getInventoryHospitalController = async (req, res) => {
       .find(req.body.filters)
       .populate("donar")
       .populate("hospital")
-      .populate("organisation")
       .sort({ createdAt: -1 });
     return res.status(200).send({
       success: true,
@@ -142,9 +164,9 @@ const getInventoryHospitalController = async (req, res) => {
 const getRecentInventoryController = async (req, res) => {
   try {
     const inventory = await inventoryModel
-      .find({
-        organisation: req.body.userId,
-      })
+      .find({})
+      .populate("donar")
+      .populate("hospital")
       .limit(3)
       .sort({ createdAt: -1 });
     return res.status(200).send({
@@ -165,12 +187,9 @@ const getRecentInventoryController = async (req, res) => {
 
 const getDonarsController = async (req, res) => {
   try {
-    const organisation = req.body.userId;
-    //find donars
     const donorId = await inventoryModel.distinct("donar", {
-      organisation,
+      inventoryType: "in",
     });
-    // console.log(donorId);
     const donars = await userModel.find({ _id: { $in: donorId } });
 
     return res.status(200).send({
@@ -190,10 +209,8 @@ const getDonarsController = async (req, res) => {
 
 const getHospitalController = async (req, res) => {
   try {
-    const organisation = req.body.userId;
-    //GET hospital ID
     const hospitalId = await inventoryModel.distinct("hospital", {
-      organisation,
+      inventoryType: "out",
     });
     const hospitals = await userModel.find({
       _id: { $in: hospitalId },
@@ -213,59 +230,11 @@ const getHospitalController = async (req, res) => {
   }
 };
 
-const getOrgnaisationController = async (req, res) => {
-  try {
-    const donar = req.body.userId;
-    const orgId = await inventoryModel.distinct("organisation", { donar });
-    //find org
-    const organisations = await userModel.find({
-      _id: { $in: orgId },
-    });
-    return res.status(200).send({
-      success: true,
-      message: "Org Data Fetched Successfully",
-      organisations,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send({
-      success: false,
-      message: "Error In ORG API",
-      error,
-    });
-  }
-};
-
-const getOrgnaisationForHospitalController = async (req, res) => {
-  try {
-    const hospital = req.body.userId;
-    const orgId = await inventoryModel.distinct("organisation", { hospital });
-    //find org
-    const organisations = await userModel.find({
-      _id: { $in: orgId },
-    });
-    return res.status(200).send({
-      success: true,
-      message: "Hospital Org Data Fetched Successfully",
-      organisations,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send({
-      success: false,
-      message: "Error In Hospital ORG API",
-      error,
-    });
-  }
-};
-
 module.exports = {
   createInventoryController,
   getInventoryController,
   getHospitalController,
   getDonarsController,
-  getOrgnaisationController,
-  getOrgnaisationForHospitalController,
   getInventoryHospitalController,
   getRecentInventoryController,
 };

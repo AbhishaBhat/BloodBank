@@ -31,7 +31,6 @@ export const userRegister = createAsyncThunk(
         role,
         email,
         password,
-        organisationName,
         hospitalName,
         website,
         address,
@@ -42,7 +41,6 @@ export const userRegister = createAsyncThunk(
                     role,
                     email,
                     password,
-                    organisationName,
                     hospitalName,
                     website,
                     address,
@@ -52,8 +50,10 @@ export const userRegister = createAsyncThunk(
                 if(data.success){
                     toast.success(data.message);
                     window.location.replace('/login');
+                    return data;
                 }else{
                     toast.error(data.message,{position:"top-left"});
+                    return rejectWithValue(data.message);
                 }
 
             }catch(error){
@@ -70,12 +70,13 @@ export const userRegister = createAsyncThunk(
 
 export const getCurrentUser = createAsyncThunk(
     'auth/getCurrentUser',
-    async({rejectWithValue})=>{
+    async(_, {rejectWithValue})=>{
         try{
             const res = await API.get('/auth/current-user');
             if(res?.data){
                 return res?.data;
             }
+            return rejectWithValue("Unable to fetch current user");
         }catch(error){
             if(error.response && error.response.data.message){
                 toast.error(error.response.data.message)

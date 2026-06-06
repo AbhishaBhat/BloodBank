@@ -4,11 +4,12 @@ import InputType from "./../Form/InputType";
 import API from "./../../../services/API";
 
 const Modal = () => {
-  const [inventoryType, setInventoryType] = useState("in");
   const [bloodGroup, setBloodGroup] = useState("");
   const [quantity, setQuantity] = useState(0);
-  const [email, setEmail] = useState("");
   const { user } = useSelector((state) => state.auth);
+  const inventoryType = user?.role === "hospital" ? "out" : "in";
+  const isHospital = user?.role === "hospital";
+
   // handle modal data
   const handleModalSubmit = async () => {
     try {
@@ -16,18 +17,16 @@ const Modal = () => {
         return alert("Please Provide All Fields");
       }
       const { data } = await API.post("/inventory/create-inventory", {
-        email,
-        organisation: user?._id,
         inventoryType,
         bloodGroup,
         quantity,
       });
       if (data?.success) {
-        alert("New Record Created");
+        alert(isHospital ? "Blood request recorded" : "Donation recorded");
         window.location.reload();
       }
     } catch (error) {
-      alert(error.response.data.message);
+      alert(error.response?.data?.message || "Unable to create record");
       console.log(error);
       window.location.reload();
     }
@@ -49,7 +48,7 @@ const Modal = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h1 className="modal-title fs-5" id="staticBackdropLabel">
-                Manage Blood Record
+                {isHospital ? "Request Blood Stock" : "Add Blood Donation"}
               </h1>
               <button
                 type="button"
@@ -60,32 +59,8 @@ const Modal = () => {
             </div>
             <div className="modal-body">
               <div className="d-flex mb-3">
-                Blood Type: &nbsp;
-                <div className="form-check ms-3">
-                  <input
-                    type="radio"
-                    name="inRadio"
-                    defaultChecked
-                    value={"in"}
-                    onChange={(e) => setInventoryType(e.target.value)}
-                    className="form-check-input"
-                  />
-                  <label htmlFor="in" className="form-check-label">
-                    IN
-                  </label>
-                </div>
-                <div className="form-check ms-3">
-                  <input
-                    type="radio"
-                    name="inRadio"
-                    value={"out"}
-                    onChange={(e) => setInventoryType(e.target.value)}
-                    className="form-check-input"
-                  />
-                  <label htmlFor="out" className="form-check-label">
-                    OUT
-                  </label>
-                </div>
+                Action: &nbsp;
+                <strong>{isHospital ? "Hospital Request" : "Donor Donation"}</strong>
               </div>
               <select
                 className="form-select mb-4"
@@ -105,16 +80,9 @@ const Modal = () => {
                 <option value={"B-"}>B-</option>
               </select>
               <InputType
-                labelText={"Email"}
-                labelForm={"donarEmail"}
-                inputType={"email"}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <InputType
-                labelText={"Quanitity (ML)"}
+                labelText={"Quantity (ML)"}
                 labelForm={"quantity"}
-                inputType={"Number"}
+                inputType={"number"}
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
               />

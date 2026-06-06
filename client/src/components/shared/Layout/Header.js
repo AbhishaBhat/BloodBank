@@ -22,7 +22,7 @@ const Header = () => {
                 <div className="navbar-brand h1"><MdOutlineBloodtype color='red'/>RED <span className='gold'>GOLD</span></div>
                 <ul className='navbar-nav flex-row'>
                     <li className="nav-item mx-3">
-                        <p className='nav-link'><FaUserAlt/> Welcome <span className='gold'> {user?.name || user?.hospitalName || user?.organisationName} &nbsp;</span>
+                        <p className='nav-link'><FaUserAlt/> Welcome <span className='gold'> {user?.name || user?.hospitalName} &nbsp;</span>
                         <span className="badge bg-secondary">{user?.role}</span>
                         </p>
                     </li>

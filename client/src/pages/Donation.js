@@ -53,7 +53,7 @@ const Donation = () => {
           <thead>
             <tr className="table-active">
               <th scope="col">Blood Group</th>
-              <th scope="col">Donated To</th>
+              <th scope="col">Type</th>
               <th scope="col">Quantity</th>
               <th scope="col">Email</th>
               <th scope="col">Date</th>
@@ -63,7 +63,7 @@ const Donation = () => {
             {data?.map((record) => (
               <tr key={record._id}>
                 <td>{record.bloodGroup}</td>
-                <td>{record.organisation.email}</td>
+                <td>{record.inventoryType.toUpperCase()}</td>
                 <td>{record.quantity} ml</td>
                 <td>{record.email}</td>
                 <td>{moment(record.createdAt).format("DD/MM/YYYY hh:mm A")}</td>

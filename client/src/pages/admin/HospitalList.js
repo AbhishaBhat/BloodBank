@@ -35,7 +35,7 @@ const HospitalList = () => {
         "Sure"
       );
       if (!answer) return;
-      const { data } = await API.delete(`/admin/delete-donar/${id}`);
+      const { data } = await API.delete(`/admin/delete-user/${id}`);
       alert(data?.message);
       window.location.reload();
     } catch (error) {

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { ProgressBar } from "react-loader-spinner";
 import Layout from "../components/shared/Layout/Layout";
 import Modal from "../components/shared/modal/Modal";
@@ -10,7 +9,9 @@ import moment from 'moment'
 const HomePage = () => {
   const [data,setData] = useState([]);
   const { loading, error,user } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
+  const isHospital = user?.role === "hospital";
+  const isDonor = user?.role === "donar";
+  const isAdmin = user?.role === "admin";
 
   const getBloodRecords= async()=>{
     try {
@@ -29,7 +30,6 @@ const HomePage = () => {
 
   return (
     <Layout>
-      {user?.role === 'admin' && navigate('/admin')}
       {error && <span>{alert(error)}</span>}
       {loading ? (
         <div className="d-flex justify-content-center align-items-center">
@@ -45,25 +45,44 @@ const HomePage = () => {
         </div>
       ) : (
         <>
-          <h4
-            className="ms-4"
-            data-bs-toggle="modal"
-            data-bs-target="#staticBackdrop"
-            style={{ cursor: "pointer" }}
-          >
-            <i className="fa-regular fa-square-plus text-success py-4"></i>
-            &nbsp;Add To Inventory
-          </h4>
+          <div className="container mt-3">
+            <h3>
+              {isAdmin
+                ? "Global Blood Inventory"
+                : isHospital
+                ? "Hospital Blood Requests"
+                : "Donor Blood Donations"}
+            </h3>
+            <p className="text-muted">
+              {isAdmin
+                ? "Monitor all donation and hospital request records."
+                : isHospital
+                ? "Request available blood stock and track your hospital usage."
+                : "Add donated blood stock and track your donation records."}
+            </p>
+          </div>
+
+          {(user?.role === "donar" || user?.role === "hospital") && (
+            <h4
+              className="ms-4"
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop"
+              style={{ cursor: "pointer" }}
+            >
+              <i className="fa-regular fa-square-plus text-success py-4"></i>
+              &nbsp;{user?.role === "hospital" ? "Request Blood" : "Add Blood Donation"}
+            </h4>
+          )}
 
             <div className="container m-3">
             <table className="table">
               <thead>
                 <tr>
-                  <th scope="col">Blood Groud</th>
-                  <th scope="col">InventoryType</th>
+                  <th scope="col">Blood Group</th>
+                  <th scope="col">Type</th>
                   <th scope="col">Quantity</th>
-                  <th scope="col">Donar Email</th>
-                  <th scope="col">Time Date</th>
+                  <th scope="col">{isHospital ? "Hospital Email" : isDonor ? "Donor Email" : "User Email"}</th>
+                  <th scope="col">Date</th>
                 </tr>
               </thead>
               <tbody>
@@ -81,7 +100,7 @@ const HomePage = () => {
             </div>
 
 
-          <Modal />
+          {(user?.role === "donar" || user?.role === "hospital") && <Modal />}
         </>
       )}
     </Layout>

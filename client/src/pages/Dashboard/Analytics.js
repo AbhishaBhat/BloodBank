@@ -52,7 +52,7 @@ const Analytics = () => {
                 Total In : <b>{record.totalIn}</b> ml
               </p>
               <p className="card-text">
-                Total Out : <b>{record.totalIn}</b> ml
+                Total Out : <b>{record.totalOut}</b> ml
               </p>
             </div>
             <div className="card-footer card_footer text-light bg-dark text-center">

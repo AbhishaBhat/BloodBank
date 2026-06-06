@@ -1,45 +1,75 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../components/shared/Layout/Layout";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import API from "../../services/API";
 
 const AdminHome = () => {
   const { user } = useSelector((state) => state.auth);
+  const [summary, setSummary] = useState({
+    donors: 0,
+    hospitals: 0,
+    inventory: 0,
+  });
+
+  const getSummary = async () => {
+    try {
+      const [donorsRes, hospitalsRes, inventoryRes] = await Promise.all([
+        API.get("/admin/donar-list"),
+        API.get("/admin/hospital-list"),
+        API.get("/inventory/get-inventory"),
+      ]);
+
+      setSummary({
+        donors: donorsRes.data?.donarData?.length || 0,
+        hospitals: hospitalsRes.data?.hospitalData?.length || 0,
+        inventory: inventoryRes.data?.inventory?.length || 0,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getSummary();
+  }, []);
+
   return (
     <Layout>
       <div className="container p-3">
-        <div className="d-felx flex-column mt-4">
-          <h1>
-            Welcome Admin <i className="text-success">{user?.name}</i>
-          </h1>
-          <h3 className="mt-4">Manage Blood Bank App </h3>
-          <hr />
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad
-            explicabo animi blanditiis incidunt dicta quia, quibusdam facere
-            corporis! Dolores, reprehenderit cum sed repellat laudantium
-            architecto natus est nostrum accusamus, odio aspernatur minima
-            fugiat quam molestiae nisi. Temporibus impedit dolorem quia.
-            Distinctio modi non excepturi illo odio voluptatum quae nostrum a
-            temporibus sequi! Explicabo, quasi consequatur ad qui quos labore
-            distinctio voluptates alias nostrum ab dicta aspernatur molestias
-            adipisci quibusdam error ipsa. Totam, tenetur dolores eaque tempora
-            officiis deserunt assumenda? Rerum nemo est nihil laudantium
-            necessitatibus. Possimus, voluptatem voluptates blanditiis quas
-            aspernatur, quam, quaerat minus maiores ipsam sint perferendis
-            dolor. Dignissimos voluptatem doloribus sint in quis omnis, atque
-            neque praesentium voluptatum suscipit. Quas esse, accusantium maxime
-            obcaecati iure officiis aperiam minus alias quod cum quos qui
-            voluptatibus, numquam, ad id dolore odit! Minima laudantium sunt,
-            explicabo nesciunt quos voluptatibus qui libero eligendi praesentium
-            debitis obcaecati similique assumenda nobis labore totam dolore
-            perferendis adipisci fugiat quibusdam tempore doloremque voluptatum
-            accusantium. Accusamus, incidunt sequi. Esse sunt officia fuga,
-            officiis saepe tempora repellat suscipit aliquid cupiditate
-            perferendis, asperiores architecto molestiae rem iste eaque
-            molestias reiciendis. Laborum modi asperiores, reprehenderit
-            assumenda numquam, vitae exercitationem illum nesciunt, dolorum
-            deleniti accusamus consequatur id. Necessitatibus dolore ad fugit?
-          </p>
+        <div className="d-flex flex-column mt-4">
+          <h1>Welcome Admin <i className="text-success">{user?.name}</i></h1>
+          <p className="text-muted">Manage users and monitor blood inventory activity.</p>
+
+          <div className="row mt-3">
+            <div className="col-md-4 mb-3">
+              <div className="card">
+                <div className="card-body">
+                  <h5 className="card-title">Donors</h5>
+                  <h2>{summary.donors}</h2>
+                  <Link className="btn btn-outline-primary" to="/donar-list">Manage Donors</Link>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4 mb-3">
+              <div className="card">
+                <div className="card-body">
+                  <h5 className="card-title">Hospitals</h5>
+                  <h2>{summary.hospitals}</h2>
+                  <Link className="btn btn-outline-primary" to="/hospital-list">Manage Hospitals</Link>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4 mb-3">
+              <div className="card">
+                <div className="card-body">
+                  <h5 className="card-title">Blood Records</h5>
+                  <h2>{summary.inventory}</h2>
+                  <Link className="btn btn-outline-primary" to="/">View Inventory</Link>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </Layout>

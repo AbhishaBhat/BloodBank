@@ -7,7 +7,7 @@ export const handleLogin = (e, email, password, role) => {
     if(!role || !email || !password){
         return alert("Please Provide All Fields")
     }
-    store.dispatch(userLogin({e, email, password, role}));
+    store.dispatch(userLogin({email, password, role}));
   } catch (error) {
     console.log("Error in login: ", error);
   }
@@ -18,7 +18,6 @@ export const handleRegister = (
   role,
   email,
   password,
-  organisationName,
   hospitalName,
   website,
   address,
@@ -31,7 +30,6 @@ export const handleRegister = (
       role,
       email,
       password,
-      organisationName,
       hospitalName,
       website,
       address,

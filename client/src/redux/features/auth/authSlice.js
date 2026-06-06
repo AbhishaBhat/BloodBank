@@ -23,8 +23,8 @@ const authSlice = createSlice({
 
     builder.addCase(userLogin.fulfilled, (state, { payload }) => {
       state.loading = false;
-      state.user = payload.user;
-      state.token = payload.token;
+      state.user = payload?.user || null;
+      state.token = payload?.token || null;
     });
 
     builder.addCase(userLogin.rejected, (state, { payload }) => {
@@ -41,7 +41,7 @@ const authSlice = createSlice({
     builder.addCase(userRegister.fulfilled, (state, { payload }) => {
       state.loading = false;
       state.success = true;
-      state.user = payload.user;
+      state.user = payload?.user || null;
     });
 
     builder.addCase(userRegister.rejected, (state, { payload }) => {
@@ -58,7 +58,7 @@ const authSlice = createSlice({
     builder.addCase(getCurrentUser.fulfilled, (state, { payload }) => {
       state.loading = false;
       state.success = true;
-      state.user = payload.user;
+      state.user = payload?.user || null;
     });
 
     builder.addCase(getCurrentUser.rejected, (state, { payload }) => {

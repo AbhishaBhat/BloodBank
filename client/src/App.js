@@ -8,13 +8,11 @@ import ProtectedRoute from './components/routes/ProtectedRoute';
 import PublicRoute from './components/routes/PublicRoute';
 import Donar from './pages/Dashboard/Donar';
 import Hospital from './pages/Dashboard/Hospital';
-import OrganisationPage from './pages/Dashboard/OrganisationPage';
 import Consumer from './pages/Dashboard/Consumer';
 import Donation from './pages/Donation';
 import Analytics from './pages/Dashboard/Analytics';
 import DonarList from './pages/admin/DonarList';
 import HospitalList from './pages/admin/HospitalList';
-import OrgList from './pages/admin/OrgList';
 import AdminHome from './pages/admin/AdminHome';
 function App() {
   return (
@@ -51,14 +49,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/org-list"
-          element={
-            <ProtectedRoute>
-              <OrgList />
-            </ProtectedRoute>
-          }/>
-
         <Route path="/donar" element={
             <ProtectedRoute>
               <Donar/>
@@ -82,11 +72,6 @@ function App() {
         <Route path="/donation" element={
             <ProtectedRoute>
               <Donation/>
-            </ProtectedRoute>
-        } />
-        <Route path="/organisation" element={
-            <ProtectedRoute>
-              <OrganisationPage/>
             </ProtectedRoute>
         } />
         <Route path="/login" element={
