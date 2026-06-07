@@ -1,5 +1,6 @@
 import React ,{ useEffect} from 'react'
-import {useDispatch} from 'react-redux'
+import PropTypes from 'prop-types'
+import {useDispatch}from 'react-redux'
 import {Navigate} from 'react-router-dom'
 import { getCurrentUser } from '../../redux/features/auth/authActions';
 
@@ -17,6 +18,10 @@ const ProtectedRoute = ({children}) => {
     }else{
         return <Navigate to='/login'/>
     }
+}
+
+ProtectedRoute.propTypes = {
+  children: PropTypes.node.isRequired,
 }
 
 export default ProtectedRoute

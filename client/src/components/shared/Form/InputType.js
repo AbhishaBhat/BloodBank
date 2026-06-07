@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const InputType = ({labelText,lableForm, inputType, value, onChange, name}) => {
   return (
@@ -15,5 +16,14 @@ const InputType = ({labelText,lableForm, inputType, value, onChange, name}) => {
     </>
   )
 }
+
+InputType.propTypes = {
+  labelText: PropTypes.string.isRequired,
+  lableForm: PropTypes.string.isRequired,
+  inputType: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
+};
 
 export default InputType

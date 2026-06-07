@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Navigate } from 'react-router-dom'
 
 const PublicRoute = ({children}) => {
@@ -7,6 +8,10 @@ const PublicRoute = ({children}) => {
   }else{
     return children;
   }
+}
+
+PublicRoute.propTypes = {
+  children: PropTypes.node.isRequired,
 }
 
 export default PublicRoute

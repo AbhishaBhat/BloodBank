@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from 'prop-types'
 import InputType from "./InputType";
 import { Link } from "react-router-dom";
 import { handleLogin, handleRegister } from "../../../services/authService";
@@ -196,6 +197,12 @@ const Form = ({ formType, submitBtn, formTitle }) => {
       </form>
     </div>
   );
+};
+
+Form.propTypes = {
+  formType: PropTypes.string.isRequired,
+  submitBtn: PropTypes.string.isRequired,
+  formTitle: PropTypes.string.isRequired,
 };
 
 export default Form;
